@@ -6,12 +6,12 @@ pub const RequestData = struct {
 };
 
 pub const Method = enum {
-    Get,
-    Post,
-    Delete,
-    Patch,
-    Put,
-    Unknown,
+    get,
+    post,
+    delete,
+    patch,
+    put,
+    unknown,
 };
 
 const HeaderHashMap = std.hash_map.StringHashMap([]const u8);
@@ -68,16 +68,16 @@ pub fn parseRequest(request: RequestData) Request {
 
 pub fn parseMethod(methodStr: []const u8) Method {
     if (std.mem.eql(u8, methodStr, "GET")) {
-        return Method.Get;
+        return Method.get;
     } else if (std.mem.eql(u8, methodStr, "POST")) {
-        return Method.Post;
+        return Method.post;
     } else if (std.mem.eql(u8, methodStr, "PATCH")) {
-        return Method.Patch;
+        return Method.patch;
     } else if (std.mem.eql(u8, methodStr, "PUT")) {
-        return Method.Put;
+        return Method.put;
     } else if (std.mem.eql(u8, methodStr, "DELETE")) {
-        return Method.Delete;
+        return Method.delete;
     } else {
-        return Method.Unknown;
+        return Method.unknown;
     }
 }

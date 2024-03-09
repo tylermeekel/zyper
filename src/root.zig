@@ -5,6 +5,7 @@ const hash_map = std.hash_map;
 
 // export libraries
 pub const request = @import("request.zig");
+pub const response = @import("response.zig");
 
 /// HTTP Handler Function type
 pub const HandlerFunction = *const fn (streamWriter: net.Stream.Writer, req: request.Request) anyerror!void;
@@ -80,24 +81,24 @@ pub const HTTPServer = struct {
 
                 // switch based on the method of the Request struct
                 switch (parsedRequest.method) {
-                    .Get => {
+                    .get => {
                         // Get the GET HandlerFunc on the Reques path if it exists, 
                         // or replace it with the write404 HandlerFunc
                         handlerFunc = self.methodGetFunctions.get(parsedRequest.path) orelse self.notFoundFunc;
                     },
-                    .Patch => {
+                    .patch => {
                         handlerFunc = self.methodPatchFunctions.get(parsedRequest.path) orelse self.notFoundFunc;
                     },
-                    .Post => {
+                    .post => {
                         handlerFunc = self.methodPostFunctions.get(parsedRequest.path) orelse self.notFoundFunc;
                     },
-                    .Put => {
+                    .put => {
                         handlerFunc = self.methodPutFunctions.get(parsedRequest.path) orelse self.notFoundFunc;
                     },
-                    .Delete => {
+                    .delete => {
                         handlerFunc = self.methodDeleteFunctions.get(parsedRequest.path) orelse self.notFoundFunc;
                     },
-                    .Unknown => {
+                    .unknown => {
                         handlerFunc = self.notFoundFunc;
                     },
                 }

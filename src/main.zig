@@ -28,7 +28,7 @@ pub fn main() !void {
     defer httpServer.methodPatchFunctions.deinit();
 
     // We attach a POST handler function to the /echo path
-    try httpServer.post("/echo", echoHandler);
+    try httpServer.post("/echo", yippeeHandler);
 
     // Start the server, passing in a buffer size for reading requests to the server.
     // In the future this will be handled automatically.
@@ -38,15 +38,14 @@ pub fn main() !void {
 // Create a function handler for POST requests.
 // These functions must follow the signature:
 // fn(w: std.net.Stream.Writer, r: zyper.request.Request) anyerror!void
-fn echoHandler(w: std.net.Stream.Writer, r: zyper.request.Request) !void {
+fn yippeeHandler(w: std.net.Stream.Writer, _: zyper.request.Request) !void {
+    var gpa = std.heap.GeneralPurposeAllocator(){};
+    const allocator = gpa.allocator();
 
-    // Access headers through the request headers hashmap
-    const v = r.headers.get("Content-Type").?;
-    std.debug.print("Content Type Header - {s}\n", .{v});
+    const response = zyper.response.Response.init(allocator, zyper.response.StatusCode.ok, "Yippee!");
+    defer response.deinit();
 
-    // write to the stream writer.
-    // in the future, headers and HTTP formatting will be handled automatically.
-    // as well, the Request type will be more intuitive, allowing users to access
-    // information about the request more easily.
-    try w.print("HTTP/1.1 200 OK\r\nContent-Length: {d}\r\n\r\n{s}\r\n", .{ r.body.len + 2, r.body });
+    const responseString = try response.toString(allocator);
+    w.write(responseString);
+    defer allocator.free(responseString);
 }
