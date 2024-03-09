@@ -6,6 +6,9 @@
 
 Zyper is an HTTP Server library for Zig that is built to be easy and fun to use.
 
+At this stage Zyper is essentially just a proof of concept, and really is just a way for me to learn
+the HTTP protocol and Zig. 
+
 ## Features
 
 ### Current
