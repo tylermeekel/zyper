@@ -10,9 +10,11 @@ Zyper is an HTTP Server library for Zig that is built to be easy and fun to use.
 
 ### Current
 - Easy-to-learn API
-- Built on top of the Zig standard library for easy interoperability
+- Create a server, add handler functions, and go!
 
 ### Planned
+- Full HTTP 1.1 Support
+- Full HTTP 2.0 Support
 - Support for middleware to handle common tasks such as logging, authentication, and rate limiting
 - WebSocket support for real-time communication
 - Built-in support for routing and request handling
