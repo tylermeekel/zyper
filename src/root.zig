@@ -9,28 +9,27 @@ pub const request = @import("request.zig");
 /// HTTP Handler Function type
 pub const HandlerFunction = *const fn (streamWriter: net.Stream.Writer, req: request.Request) anyerror!void;
 
-const FunctionHashMap = hash_map.StringHashMap(HandlerFunction);
+/// HashMap type for matching paths to HandlerFunctions
+const HandlerFunctionHashMap = hash_map.StringHashMap(HandlerFunction);
 
 pub const HTTPServer = struct {
     port: u16,
-    methodGetFunctions: FunctionHashMap,
-    methodPostFunctions: FunctionHashMap,
-    methodPutFunctions: FunctionHashMap,
-    methodDeleteFunctions: FunctionHashMap,
-    methodUpdateFunctions: FunctionHashMap,
-    methodPatchFunctions: FunctionHashMap,
+    methodGetFunctions: HandlerFunctionHashMap,
+    methodPostFunctions: HandlerFunctionHashMap,
+    methodPutFunctions: HandlerFunctionHashMap,
+    methodDeleteFunctions: HandlerFunctionHashMap,
+    methodPatchFunctions: HandlerFunctionHashMap,
     notFoundFunc: HandlerFunction,
 
     /// Initialize an HTTPServer struct. This allocates space for each of the handler function
     /// hashmaps.
     pub fn init(allocator: std.mem.Allocator, port: u16) HTTPServer {
         return HTTPServer{
-            .methodGetFunctions = FunctionHashMap.init(allocator),
-            .methodPostFunctions = FunctionHashMap.init(allocator),
-            .methodPutFunctions = FunctionHashMap.init(allocator),
-            .methodDeleteFunctions = FunctionHashMap.init(allocator),
-            .methodUpdateFunctions = FunctionHashMap.init(allocator),
-            .methodPatchFunctions = FunctionHashMap.init(allocator),
+            .methodGetFunctions = HandlerFunctionHashMap.init(allocator),
+            .methodPostFunctions = HandlerFunctionHashMap.init(allocator),
+            .methodPutFunctions = HandlerFunctionHashMap.init(allocator),
+            .methodDeleteFunctions = HandlerFunctionHashMap.init(allocator),
+            .methodPatchFunctions = HandlerFunctionHashMap.init(allocator),
 
             .notFoundFunc = write404,
 
@@ -95,9 +94,6 @@ pub const HTTPServer = struct {
                     .Put => {
                         handlerFunc = self.methodPutFunctions.get(parsedRequest.path) orelse self.notFoundFunc;
                     },
-                    .Update => {
-                        handlerFunc = self.methodUpdateFunctions.get(parsedRequest.path) orelse self.notFoundFunc;
-                    },
                     .Delete => {
                         handlerFunc = self.methodDeleteFunctions.get(parsedRequest.path) orelse self.notFoundFunc;
                     },
@@ -125,6 +121,21 @@ pub const HTTPServer = struct {
     /// Assign a POST HandlerFunc to the given path.
     pub fn post(self: *HTTPServer, path: []const u8, handlerFunc: HandlerFunction) !void {
         try self.methodPostFunctions.put(path, handlerFunc);
+    }
+
+    /// Assign a PATCH HandlerFunc to the given path.
+    pub fn patch(self: *HTTPServer, path: []const u8, handlerFunc: HandlerFunction) !void {
+        try self.methodPatchFunctions.put(path, handlerFunc);
+    }
+
+    /// Assign a PUT HandlerFunc to the given path.
+    pub fn put(self: *HTTPServer, path: []const u8, handlerFunc: HandlerFunction) !void {
+        try self.methodPutFunctions.put(path, handlerFunc);
+    }
+
+    /// Assign a DELETE HandlerFunc to the given path.
+    pub fn delete(self: *HTTPServer, path: []const u8, handlerFunc: HandlerFunction) !void {
+        try self.methodDeleteFunctions.put(path, handlerFunc);
     }
 
     /// 404 handler.

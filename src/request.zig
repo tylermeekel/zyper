@@ -8,7 +8,6 @@ pub const RequestData = struct {
 pub const Method = enum {
     Get,
     Post,
-    Update,
     Delete,
     Patch,
     Put,
@@ -76,8 +75,6 @@ pub fn parseMethod(methodStr: []const u8) Method {
         return Method.Patch;
     } else if (std.mem.eql(u8, methodStr, "PUT")) {
         return Method.Put;
-    } else if (std.mem.eql(u8, methodStr, "UPDATE")) {
-        return Method.Update;
     } else if (std.mem.eql(u8, methodStr, "DELETE")) {
         return Method.Delete;
     } else {
